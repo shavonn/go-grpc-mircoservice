@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grpc-microservice
+  labels:
+    app: grpc-microservice
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: grpc-microservice
+  template:
+    metadata:
+      labels:
+        app: grpc-microservice
+    spec:
+      containers:
+        - name: grpc-microservice
+          image: grpc-microservice:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SERVER_ADDRESS
+              value: ":8080"
+            - name: LOG_LEVEL
+              value: "info"
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          livenessProbe:
+            exec:
+              command: ["/bin/grpc_health_probe", "-addr=:8080"]
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command: ["/bin/grpc_health_probe", "-addr=:8080"]
+            initialDelaySeconds: 5
+            periodSeconds: 5

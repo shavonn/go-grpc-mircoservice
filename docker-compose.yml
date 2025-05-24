@@ -1,0 +1,14 @@
+services:
+  grpc-microservice:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - SERVER_ADDRESS=:8080
+      - LOG_LEVEL=info
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "grpc_health_probe", "-addr=:8080"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
